@@ -2,6 +2,8 @@
 
 Hệ thống tự động hóa kiểm tra bảo mật (Security Audit) dựa trên tiêu chuẩn CIS Benchmark cho nhiều loại hệ thống khác nhau.
 
+Link git: https://github.com/Pax97/securityauditgod
+
 ## Tổng quan
 
 Công cụ này cung cấp:
