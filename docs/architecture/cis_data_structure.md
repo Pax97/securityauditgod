@@ -238,8 +238,6 @@ Thiết kế này phù hợp với yêu cầu của công cụ tự động hóa
 
 # Mô tả quan hệ cho mô hình dữ liệu CIS
 
-Tôi sẽ bổ sung mô tả chi tiết về quan hệ giữa các bảng trong mô hình dữ liệu CIS Benchmark. Đây là nội dung cần thêm vào file `cis_data_structure.md`:
-
 ## Mô tả quan hệ giữa các bảng
 
 ### 1. Quan hệ Benchmark - Platform
