@@ -1,0 +1,48 @@
+name: Collector Scripts CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'collectors/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'collectors/**'
+
+jobs:
+  test-linux-collectors:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y shellcheck
+    
+    - name: Run ShellCheck
+      run: |
+        shellcheck collectors/linux/*.sh collectors/mysql/*.sh
+    
+    - name: Run Linux collector unit tests
+      run: |
+        bash collectors/linux/tests/run_tests.sh
+
+  test-windows-collectors:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Run PSScriptAnalyzer
+      shell: pwsh
+      run: |
+        Install-Module -Name PSScriptAnalyzer -Force
+        $results = Invoke-ScriptAnalyzer -Path collectors/windows/ -Recurse
+        $results | Format-Table
+        if ($results) { throw "PSScriptAnalyzer found issues" }
+    
+    - name: Run Windows collector unit tests
+      shell: pwsh
+      run: |
+        collectors/windows/tests/run_tests.ps1
