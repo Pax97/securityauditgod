@@ -1,0 +1,15 @@
+# Import requirements.txt
+-r requirements.txt
+
+# Công cụ phát triển
+black==23.12.0
+flake8==6.1.0
+isort==5.13.2
+pre-commit==3.5.0
+
+# Debug
+django-debug-toolbar==4.2.0
+ipython==8.18.0
+
+# Tài liệu
+sphinx==7.2.6

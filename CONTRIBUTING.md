@@ -1,33 +1,24 @@
-# Hướng dẫn đóng góp
+# Contributing Guidelines
 
-Cảm ơn bạn đã quan tâm đến việc đóng góp vào dự án Security Audit Tool! Dưới đây là hướng dẫn để giúp quá trình đóng góp diễn ra suôn sẻ.
+## Git Workflow
 
-## Quy trình đóng góp
+- `main`: branch cho production release
+- `develop`: branch chính cho phát triển
+- `feature/*`: branch cho tính năng mới (ví dụ: feature/user-authentication)
+- `bugfix/*`: branch cho sửa lỗi
+- `release/*`: branch cho chuẩn bị release
 
-1. Fork repository
-2. Tạo nhánh tính năng (`git checkout -b feature/amazing-feature`)
-3. Commit thay đổi (`git commit -m 'Add some amazing feature'`)
-4. Push lên nhánh (`git push origin feature/amazing-feature`)
-5. Tạo Pull Request
+## Pull Request Process
 
-## Quy chuẩn code
+1. Tạo branch từ `develop` cho tính năng mới hoặc sửa lỗi
+2. Code, test và commit thay đổi của bạn
+3. Push branch và tạo Pull Request vào `develop`
+4. Đợi code review và CI passes
+5. Merge sau khi được approve
 
-- Tuân thủ PEP 8 cho Python
-- Viết tests cho tất cả các tính năng mới
-- Đảm bảo tất cả tests đều pass
-- Cập nhật documentation nếu cần
+## Coding Standards
 
-## Báo cáo lỗi
-
-Khi báo cáo lỗi, vui lòng bao gồm:
-- Mô tả chi tiết về lỗi
-- Các bước để tái hiện lỗi
-- Môi trường hệ thống, phiên bản phần mềm
-- Ảnh chụp màn hình (nếu có)
-
-## Yêu cầu tính năng
-
-Khi đề xuất tính năng mới, vui lòng:
-- Giải thích rõ vấn đề mà tính năng giải quyết
-- Mô tả cách hoạt động dự kiến
-- Nêu rõ lợi ích so với giải pháp hiện tại
+- Tuân thủ PEP 8
+- Sử dụng Black cho code formatting
+- Viết docstrings cho functions và classes
+- Viết unit tests cho code mới

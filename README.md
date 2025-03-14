@@ -1,37 +1,41 @@
-# Security Audit Tool theo CIS Benchmark
+# CIS Benchmark Assessment Tool
 
-Hệ thống tự động hóa kiểm tra bảo mật (Security Audit) dựa trên tiêu chuẩn CIS Benchmark cho nhiều loại hệ thống khác nhau.
+Tool tự động hóa Security Audit theo CIS Benchmark với kiến trúc monolithic.
 
-Link git: https://github.com/Pax97/securityauditgod
+## Tính năng
 
-## Tổng quan
+- Thu thập thông tin cấu hình từ hệ thống (Linux, Windows, MySQL)
+- Đánh giá tuân thủ theo tiêu chuẩn CIS Benchmark
+- Quản lý tài sản (inventory) theo dự án
+- Tạo báo cáo chi tiết và tổng quan
+- Theo dõi tiến độ cải thiện theo thời gian
 
-Công cụ này cung cấp:
-- Thu thập thông tin cấu hình từ nhiều loại hệ thống (OS, Network, Database, Cloud)
-- Chuẩn hóa dữ liệu vào một mô hình thống nhất
-- Đánh giá mức độ tuân thủ theo tiêu chuẩn CIS Benchmark
-- Báo cáo và Dashboard hiển thị kết quả đánh giá
+## Cài đặt
 
-## Kiến trúc
+### Yêu cầu
 
-Hệ thống bao gồm bốn tầng chính:
-1. **Tầng Thu thập**: Các collectors cho các loại hệ thống
-2. **Tầng Chuẩn hoá**: Engine chuẩn hoá dữ liệu
-3. **Tầng Đánh giá**: CIS Database và Rule Engine
-4. **Tầng Báo cáo**: Dashboard và Report Generator
+- Python 3.8+
+- Git
 
-## Hướng dẫn cài đặt
+### Thiết lập môi trường phát triển
 
-[Thêm hướng dẫn cài đặt chi tiết]
+```bash
+# Clone repository
+git clone <repository-url>
+cd cis-benchmark-tool
 
-## Hướng dẫn sử dụng
+# Tạo và kích hoạt môi trường ảo
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# hoặc
+venv\Scripts\activate  # Windows
 
-[Thêm hướng dẫn sử dụng]
+# Cài đặt dependencies
+pip install -r requirements-dev.txt
 
-## Đóng góp
+# Khởi tạo database
+cd webapp
+python manage.py migrate
 
-Tham khảo [CONTRIBUTING.md](CONTRIBUTING.md) để biết thông tin về cách đóng góp vào dự án.
-
-## Giấy phép
-
-Dự án này được phân phối dưới giấy phép [TÊN GIẤY PHÉP]. Xem file [LICENSE](LICENSE) để biết thêm chi tiết.
+# Chạy server
+python manage.py runserver
