@@ -6,18 +6,28 @@
    - [Cấu trúc Benchmark](#cấu-trúc-benchmark)
    - [Cấu trúc khuyến nghị (Control)](#cấu-trúc-khuyến-nghị-control)
    - [Điểm khác nhau giữa các Benchmark](#điểm-khác-nhau-giữa-các-benchmark)
-3. [Mô hình dữ liệu chung](#mô-hình-dữ-liệu-chung)
-   - [Sơ đồ quan hệ](#sơ-đồ-quan-hệ)
-   - [Mô tả chi tiết các đối tượng](#mô-tả-chi-tiết-các-đối-tượng)
-4. [Kết luận](#kết-luận)
+3. [Mô hình dữ liệu SQLite](#mô-hình-dữ-liệu-sqlite)
+   - [Sơ đồ cấu trúc CSDL](#sơ-đồ-cấu-trúc-csdl)
+   - [Mô tả chi tiết các bảng](#mô-tả-chi-tiết-các-bảng)
+4. [Cấu trúc dữ liệu Inventory](#cấu-trúc-dữ-liệu-inventory)
+   - [Mô hình quản lý tài sản](#mô-hình-quản-lý-tài-sản)
+   - [Phân nhóm và phân loại](#phân-nhóm-và-phân-loại)
+5. [Lưu trữ kết quả đánh giá](#lưu-trữ-kết-quả-đánh-giá)
+   - [Cấu trúc lưu trữ kết quả](#cấu-trúc-lưu-trữ-kết-quả)
+   - [Theo dõi lịch sử](#theo-dõi-lịch-sử)
+6. [Kết luận](#kết-luận)
 
 ## Giới thiệu
 
-Tài liệu này mô tả thiết kế cấu trúc dữ liệu chung cho việc lưu trữ và xử lý các CIS Benchmark từ nhiều hệ thống khác nhau (Windows, Ubuntu Linux, MySQL). Mục tiêu là tạo một mô hình dữ liệu thống nhất có thể hỗ trợ đánh giá an ninh trên nhiều loại hệ thống khác nhau.
+Tài liệu này mô tả thiết kế cấu trúc dữ liệu cho công cụ tự động hoá Security Audit theo CIS Benchmark với kiến trúc monolithic. Mục tiêu là tạo một mô hình dữ liệu đơn giản, hiệu quả và dễ triển khai, cho phép lưu trữ và quản lý thông tin từ các CIS Benchmark khác nhau cùng với kết quả đánh giá.
+
+Thiết kế này tập trung vào việc sử dụng SQLite làm cơ sở dữ liệu nhúng, loại bỏ sự phức tạp không cần thiết của các cơ sở dữ liệu phân tán, đồng thời vẫn đảm bảo khả năng mở rộng và linh hoạt để hỗ trợ nhiều loại benchmark khác nhau.
 
 ## Phân tích cấu trúc chung các CIS Benchmarks
 
 ### Cấu trúc Benchmark
+
+Sau khi phân tích các CIS Benchmark cho Windows, Ubuntu Linux và MySQL, chúng tôi nhận thấy một cấu trúc chung như sau:
 
 | Thành phần | Mô tả | Windows | Ubuntu | MySQL |
 |------------|-------|---------|--------|-------|
@@ -35,6 +45,8 @@ Tất cả các CIS Benchmark đều tuân theo cấu trúc cơ bản sau:
 
 ### Cấu trúc khuyến nghị (Control)
 
+Mỗi Control (khuyến nghị) trong CIS Benchmark đều bao gồm các thành phần sau:
+
 | Thành phần | Mô tả | Windows | Ubuntu | MySQL |
 |------------|-------|---------|--------|-------|
 | ID | Mã định danh (phân cấp dạng X.Y.Z) | ✓ | ✓ | ✓ |
@@ -49,16 +61,9 @@ Tất cả các CIS Benchmark đều tuân theo cấu trúc cơ bản sau:
 | References | Tham chiếu thêm | ✓ | ✓ | ✓ |
 | CIS Controls Mapping | Ánh xạ tới CIS Controls | ✓ | ✓ | ✓ |
 
-Mỗi Control (khuyến nghị) đều có các thành phần sau:
-- **ID và Title**: Định danh và tên của khuyến nghị
-- **Profile Applicability**: Thông tin về mức độ áp dụng (Level 1, Level 2...)
-- **Description**: Mô tả chi tiết về khuyến nghị
-- **Rationale**: Lý do tại sao cần thực hiện khuyến nghị này
-- **Impact**: Tác động có thể có khi áp dụng khuyến nghị
-- **Audit/Remediation**: Hướng dẫn cách kiểm tra và khắc phục
-- **Metadata**: Thông tin bổ sung như giá trị mặc định, tham khảo...
-
 ### Điểm khác nhau giữa các Benchmark
+
+Mặc dù có cấu trúc chung, mỗi loại Benchmark có những đặc thù riêng:
 
 - **Phạm vi kiểm tra**: 
   - Windows: Tập trung vào Group Policy, Registry Settings
@@ -75,410 +80,326 @@ Mỗi Control (khuyến nghị) đều có các thành phần sau:
   - Ubuntu: Server/Workstation profiles
   - MySQL: MySQL RDBMS on Linux/MySQL RDBMS standalone
 
-## Mô hình dữ liệu chung
+## Mô hình dữ liệu SQLite
 
-### Sơ đồ quan hệ
+### Sơ đồ cấu trúc CSDL
+
+Mô hình dữ liệu cho SQLite được thiết kế đơn giản, gồm các bảng chính sau:
 
 ```mermaid
-classDiagram
-    Benchmark "1" -- "*" Section
-    Section "1" -- "*" Section : sub-sections
-    Section "1" -- "*" Control
-    Control "*" -- "*" Profile : applicable_to
-    Control "1" -- "1" AuditProcedure
-    Control "1" -- "1" RemediationProcedure
-    Benchmark "*" -- "1" Platform
+erDiagram
+    Benchmarks ||--o{ Profiles : contains
+    Benchmarks ||--o{ Sections : contains
+    Sections ||--o{ Controls : contains
+    Controls }o--o{ Profiles : applies_to
+    Projects ||--o{ Assets : contains
+    Projects ||--o{ AssetGroups : contains
+    Assets }o--o{ AssetGroups : belongs_to
+    Projects ||--o{ Assessments : contains
+    Assets ||--o{ Assessments : evaluated_in
+    Benchmarks ||--o{ Assessments : used_in
+    Profiles ||--o{ Assessments : applied_in
+    Assessments ||--o{ Results : contains
+    Controls ||--o{ Results : evaluated_in
     
-    class Benchmark {
-        +String benchmark_id
-        +String name
-        +String version
-        +Date publication_date
-        +String description
+    Benchmarks {
+        string benchmark_id PK
+        string name
+        string version
+        string publication_date
+        string description
     }
     
-    class Platform {
-        +String platform_id
-        +String name
-        +String type
-        +String version
+    Profiles {
+        string profile_id PK
+        string benchmark_id FK
+        string name
+        string description
     }
     
-    class Section {
-        +String section_id
-        +String title
-        +String description
-        +Integer level
-        +String parent_id
+    Sections {
+        string section_id PK
+        string benchmark_id FK
+        string title
+        string description
+        string parent_id FK
     }
     
-    class Control {
-        +String control_id
-        +String title
-        +String description
-        +String rationale
-        +String impact
-        +String default_value
-        +String[] references
-        +String assessment_status
-        +String[] cis_controls_mapping
+    Controls {
+        string control_id PK
+        string section_id FK
+        string title
+        string description
+        string rationale
+        string impact
+        string audit_procedure
+        string remediation
+        string default_value
+        string assessment_status
     }
     
-    class Profile {
-        +String profile_id
-        +String name
-        +String description
+    Control_Profile {
+        string control_id FK
+        string profile_id FK
     }
     
-    class AuditProcedure {
-        +String audit_id
-        +String content
-        +String platform_type
-        +String implementation_type
+    Projects {
+        string project_id PK
+        string name
+        string description
+        string created_date
     }
     
-    class RemediationProcedure {
-        +String remediation_id
-        +String content
-        +String platform_type
-        +String implementation_type
+    Assets {
+        string asset_id PK
+        string project_id FK
+        string name
+        string type
+        string hostname
+        string ip_address
+        string os_info
+        string db_info
+    }
+    
+    AssetGroups {
+        string group_id PK
+        string project_id FK
+        string name
+        string description
+    }
+    
+    Asset_Group {
+        string asset_id FK
+        string group_id FK
+    }
+    
+    Assessments {
+        string assessment_id PK
+        string project_id FK
+        string asset_id FK
+        string benchmark_id FK
+        string profile_id FK
+        string timestamp
+        string summary
+    }
+    
+    Results {
+        string result_id PK
+        string assessment_id FK
+        string control_id FK
+        string status
+        string actual_value
+        string evidence
+        string timestamp
     }
 ```
 
-### Mô tả chi tiết các đối tượng
+### Mô tả chi tiết các bảng
 
-#### Benchmark
-Đại diện cho một CIS Benchmark cụ thể.
+#### Bảng Benchmarks
+Lưu trữ thông tin về CIS Benchmarks.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| benchmark_id | String | ID định danh duy nhất của benchmark |
-| name | String | Tên đầy đủ của benchmark |
-| version | String | Phiên bản benchmark |
-| publication_date | Date | Ngày phát hành benchmark |
-| description | String | Mô tả tổng quan về benchmark |
-| platform_id | String | ID nền tảng mà benchmark áp dụng |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| benchmark_id | TEXT | ID định danh duy nhất của benchmark |
+| name | TEXT | Tên đầy đủ của benchmark |
+| version | TEXT | Phiên bản benchmark |
+| publication_date | TEXT | Ngày phát hành benchmark |
+| description | TEXT | Mô tả tổng quan |
 
-#### Platform
-Đại diện cho nền tảng được đánh giá (OS, Database...).
+#### Bảng Profiles
+Lưu trữ thông tin về các profile trong benchmark.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| platform_id | String | ID định danh duy nhất của nền tảng |
-| name | String | Tên nền tảng (Windows, Ubuntu, MySQL...) |
-| type | String | Loại nền tảng (OS, Database, Network...) |
-| version | String | Phiên bản nền tảng |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| profile_id | TEXT | ID định danh duy nhất của profile |
+| benchmark_id | TEXT | ID benchmark chứa profile này |
+| name | TEXT | Tên profile (Level 1, Level 2, STIG...) |
+| description | TEXT | Mô tả profile |
 
-#### Profile
-Đại diện cho một mức độ đánh giá trong benchmark.
+#### Bảng Sections
+Lưu trữ thông tin về các section (phần) trong benchmark.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| profile_id | String | ID định danh duy nhất của profile |
-| name | String | Tên profile (Level 1 Server, STIG...) |
-| description | String | Mô tả profile và mục đích sử dụng |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| section_id | TEXT | ID định danh duy nhất của section |
+| benchmark_id | TEXT | ID benchmark chứa section này |
+| title | TEXT | Tiêu đề section |
+| description | TEXT | Mô tả section |
+| parent_id | TEXT | ID của section cha (nếu có) |
 
-#### Section
-Đại diện cho một phần của benchmark, có thể chứa nhiều section con.
+#### Bảng Controls
+Lưu trữ thông tin về các control (khuyến nghị) trong benchmark.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| section_id | String | ID định danh duy nhất của section |
-| title | String | Tiêu đề section |
-| description | String | Mô tả section |
-| level | Integer | Cấp độ phân cấp (1, 2, 3...) |
-| parent_id | String | ID của section cha (nếu có) |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| control_id | TEXT | ID định danh duy nhất của control |
+| section_id | TEXT | ID section chứa control này |
+| title | TEXT | Tiêu đề control |
+| description | TEXT | Mô tả control |
+| rationale | TEXT | Lý do cần áp dụng |
+| impact | TEXT | Tác động khi áp dụng |
+| audit_procedure | TEXT | Hướng dẫn kiểm tra |
+| remediation | TEXT | Hướng dẫn khắc phục |
+| default_value | TEXT | Giá trị mặc định |
+| assessment_status | TEXT | Automated/Manual |
 
-#### Control
-Đại diện cho một khuyến nghị bảo mật cụ thể.
+#### Bảng Control_Profile
+Bảng quan hệ nhiều-nhiều giữa Control và Profile.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| control_id | String | ID định danh duy nhất (ví dụ: 1.1.1) |
-| title | String | Tiêu đề khuyến nghị |
-| description | String | Mô tả chi tiết |
-| rationale | String | Giải thích lý do cần thực hiện |
-| impact | String | Tác động khi áp dụng |
-| default_value | String | Giá trị mặc định |
-| references | String[] | Tham chiếu thêm |
-| assessment_status | String | Automated/Manual |
-| cis_controls_mapping | String[] | Ánh xạ tới CIS Controls |
-| audit_id | String | ID thủ tục đánh giá |
-| remediation_id | String | ID thủ tục khắc phục |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| control_id | TEXT | ID của control |
+| profile_id | TEXT | ID của profile |
 
-#### AuditProcedure
-Đại diện cho thủ tục kiểm tra một control.
+#### Bảng Projects
+Lưu trữ thông tin về các dự án đánh giá.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| audit_id | String | ID định danh duy nhất |
-| content | String | Nội dung thủ tục kiểm tra |
-| platform_type | String | Loại nền tảng áp dụng |
-| implementation_type | String | Kiểu thực hiện (command/script/manual) |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| project_id | TEXT | ID định danh duy nhất của dự án |
+| name | TEXT | Tên dự án |
+| description | TEXT | Mô tả dự án |
+| created_date | TEXT | Ngày tạo dự án |
 
-#### RemediationProcedure
-Đại diện cho thủ tục khắc phục một control.
+#### Bảng Assets
+Lưu trữ thông tin về các tài sản (máy chủ, DB...) được đánh giá.
 
-| Thuộc tính | Kiểu dữ liệu | Mô tả |
-|------------|--------------|-------|
-| remediation_id | String | ID định danh duy nhất |
-| content | String | Nội dung thủ tục khắc phục |
-| platform_type | String | Loại nền tảng áp dụng |
-| implementation_type | String | Kiểu thực hiện (command/script/manual) |
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| asset_id | TEXT | ID định danh duy nhất của tài sản |
+| project_id | TEXT | ID dự án chứa tài sản này |
+| name | TEXT | Tên tài sản |
+| type | TEXT | Loại tài sản (os, database...) |
+| hostname | TEXT | Tên máy chủ |
+| ip_address | TEXT | Địa chỉ IP |
+| os_info | TEXT | Thông tin OS (JSON) |
+| db_info | TEXT | Thông tin DB (JSON) |
+
+#### Bảng AssetGroups
+Lưu trữ thông tin về các nhóm tài sản.
+
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| group_id | TEXT | ID định danh duy nhất của nhóm |
+| project_id | TEXT | ID dự án chứa nhóm này |
+| name | TEXT | Tên nhóm |
+| description | TEXT | Mô tả nhóm |
+
+#### Bảng Asset_Group
+Bảng quan hệ nhiều-nhiều giữa Asset và AssetGroup.
+
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| asset_id | TEXT | ID của tài sản |
+| group_id | TEXT | ID của nhóm |
+
+#### Bảng Assessments
+Lưu trữ thông tin về các lần đánh giá.
+
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| assessment_id | TEXT | ID định danh duy nhất của đánh giá |
+| project_id | TEXT | ID dự án |
+| asset_id | TEXT | ID tài sản được đánh giá |
+| benchmark_id | TEXT | ID benchmark được sử dụng |
+| profile_id | TEXT | ID profile được áp dụng |
+| timestamp | TEXT | Thời điểm đánh giá |
+| summary | TEXT | Tóm tắt kết quả (JSON) |
+
+#### Bảng Results
+Lưu trữ kết quả đánh giá chi tiết cho từng control.
+
+| Trường | Kiểu dữ liệu | Mô tả |
+|--------|--------------|-------|
+| result_id | TEXT | ID định danh duy nhất của kết quả |
+| assessment_id | TEXT | ID của đánh giá |
+| control_id | TEXT | ID của control được đánh giá |
+| status | TEXT | Trạng thái (pass/fail/unknown/not_applicable) |
+| actual_value | TEXT | Giá trị thực tế |
+| evidence | TEXT | Bằng chứng |
+| timestamp | TEXT | Thời điểm đánh giá control |
+
+## Cấu trúc dữ liệu Inventory
+
+### Mô hình quản lý tài sản
+
+Mô hình quản lý tài sản được thiết kế để hỗ trợ việc tổ chức và phân loại các tài sản theo dự án. Mỗi dự án có thể chứa nhiều tài sản khác nhau (máy chủ, cơ sở dữ liệu...), và mỗi tài sản có thể được phân vào nhiều nhóm khác nhau.
+
+Các tính năng chính của mô hình quản lý tài sản:
+1. **Tổ chức theo dự án**: Mỗi tài sản thuộc về một dự án cụ thể
+2. **Phân loại tài sản**: Tài sản được phân loại theo loại (OS, Database...)
+3. **Nhóm tài sản**: Tài sản có thể được nhóm lại để quản lý và đánh giá theo nhóm
+4. **Lưu trữ metadata**: Thông tin chi tiết về tài sản được lưu trữ dưới dạng JSON
+
+### Phân nhóm và phân loại
+
+Tài sản có thể được phân nhóm và phân loại theo nhiều cách khác nhau:
+
+1. **Phân loại theo loại hệ thống**:
+   - OS (Windows, Linux...)
+   - Database (MySQL, PostgreSQL...)
+   - Network Devices
+   - Cloud Services
+
+2. **Phân nhóm theo mục đích**:
+   - Production
+   - Development
+   - Testing
+   - Staging
+
+3. **Phân nhóm theo vị trí**:
+   - Datacenter A
+   - Datacenter B
+   - Cloud
+   - On-premise
+
+4. **Phân nhóm theo mức độ quan trọng**:
+   - Critical
+   - High
+   - Medium
+   - Low
+
+5. **Phân nhóm tùy chỉnh**:
+   - Người dùng có thể tạo các nhóm tùy chỉnh theo nhu cầu
+
+## Lưu trữ kết quả đánh giá
+
+### Cấu trúc lưu trữ kết quả
+
+Kết quả đánh giá được lưu trữ trong hai bảng chính:
+- **Assessments**: Thông tin tổng quan về đánh giá
+- **Results**: Kết quả chi tiết cho từng control
+
+Mỗi lần đánh giá được lưu trữ với các thông tin:
+- Tài sản được đánh giá
+- Benchmark và profile được sử dụng
+- Thời gian đánh giá
+- Tóm tắt kết quả (số lượng pass/fail/unknown/not_applicable)
+- Điểm tuân thủ tổng thể
+
+Kết quả chi tiết cho từng control bao gồm:
+- Trạng thái đánh giá (pass/fail/unknown/not_applicable)
+- Giá trị thực tế trên hệ thống
+- Bằng chứng từ quá trình đánh giá
+- Thời gian đánh giá control
+
+### Theo dõi lịch sử
+
+Mô hình dữ liệu này cho phép theo dõi lịch sử đánh giá theo thời gian:
+- Mỗi lần đánh giá được lưu trữ như một bản ghi riêng biệt
+- Có thể so sánh kết quả giữa các lần đánh giá khác nhau
+- Theo dõi tiến độ cải thiện tuân thủ theo thời gian
+- Xác định các xu hướng và vấn đề tồn tại lâu dài
 
 ## Kết luận
 
-Mô hình dữ liệu chung này cho phép:
-1. Lưu trữ và xử lý thông tin từ nhiều loại CIS Benchmark khác nhau
-2. Duy trì cấu trúc phân cấp và quan hệ giữa các thành phần
-3. Hỗ trợ nhiều loại nền tảng (OS, Database, Network...)
-4. Mở rộng dễ dàng cho các benchmark mới
+Mô hình dữ liệu SQLite được thiết kế trong tài liệu này cung cấp một phương pháp đơn giản và hiệu quả để lưu trữ và xử lý các CIS Benchmark cùng với kết quả đánh giá. Thiết kế này có những ưu điểm sau:
 
-Thiết kế này phù hợp với yêu cầu của công cụ tự động hóa Security Audit theo CIS Benchmark, cho phép chuẩn hóa và đánh giá data từ nhiều nguồn khác nhau.
+1. **Đơn giản**: Sử dụng SQLite làm cơ sở dữ liệu nhúng, dễ dàng triển khai và sử dụng
+2. **Linh hoạt**: Hỗ trợ nhiều loại benchmark khác nhau (Windows, Linux, MySQL...)
+3. **Scalable**: Mô hình quản lý tài sản và dự án cho phép mở rộng dễ dàng
+4. **Lịch sử**: Lưu trữ và so sánh kết quả đánh giá theo thời gian
+5. **Tích hợp**: Dễ dàng tích hợp với các thành phần khác trong hệ thống
 
-# Mô tả quan hệ cho mô hình dữ liệu CIS
-
-## Mô tả quan hệ giữa các bảng
-
-### 1. Quan hệ Benchmark - Platform
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Benchmark | Platform | Nhiều-một (N:1) | Mỗi benchmark thuộc về một platform cụ thể (Windows, Linux, MySQL...). Một platform có thể có nhiều benchmark khác nhau (cho các phiên bản khác nhau). |
-
-**Ràng buộc**:
-- Trường `platform_id` trong bảng `Benchmark` là khóa ngoại tới bảng `Platform`
-- Mỗi benchmark phải thuộc về một platform xác định
-
-### 2. Quan hệ Benchmark - Section
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Benchmark | Section | Một-nhiều (1:N) | Mỗi benchmark chứa nhiều section (các phần khác nhau của tài liệu). Mỗi section thuộc về một benchmark duy nhất. |
-
-**Ràng buộc**:
-- Trường `benchmark_id` trong bảng `Section` là khóa ngoại tới bảng `Benchmark`
-- Mỗi section phải thuộc về một benchmark xác định
-
-### 3. Quan hệ Section - Section (Phân cấp)
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Section | Section | Một-nhiều (1:N) self-referencing | Mỗi section có thể chứa nhiều section con. Mỗi section con thuộc về một section cha duy nhất. |
-
-**Ràng buộc**:
-- Trường `parent_id` trong bảng `Section` là khóa ngoại tự tham chiếu (self-referencing) tới chính bảng `Section`
-- Section gốc có `parent_id` là NULL
-- Không được tạo thành chu trình trong quan hệ cha-con
-
-### 4. Quan hệ Section - Control
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Section | Control | Một-nhiều (1:N) | Mỗi section chứa nhiều control (khuyến nghị bảo mật). Mỗi control thuộc về một section duy nhất. |
-
-**Ràng buộc**:
-- Trường `section_id` trong bảng `Control` là khóa ngoại tới bảng `Section`
-- Mỗi control phải thuộc về một section xác định
-
-### 5. Quan hệ Control - Profile (Control_Profile)
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Control | Profile | Nhiều-nhiều (M:N) | Một control có thể áp dụng cho nhiều profile khác nhau (Level 1, Level 2, STIG...). Một profile bao gồm nhiều control khác nhau. |
-
-**Ràng buộc**:
-- Bảng trung gian `Control_Profile` với hai khóa ngoại là `control_id` và `profile_id`
-- Mỗi cặp (control_id, profile_id) phải là duy nhất trong bảng `Control_Profile`
-
-### 6. Quan hệ Control - AuditProcedure
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Control | AuditProcedure | Một-một (1:1) | Mỗi control có một thủ tục đánh giá (audit procedure) duy nhất. Mỗi thủ tục đánh giá thuộc về một control duy nhất. |
-
-**Ràng buộc**:
-- Trường `audit_id` trong bảng `Control` là khóa ngoại tới bảng `AuditProcedure`
-- Mỗi control phải có một audit procedure xác định
-
-### 7. Quan hệ Control - RemediationProcedure
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Control | RemediationProcedure | Một-một (1:1) | Mỗi control có một thủ tục khắc phục (remediation procedure) duy nhất. Mỗi thủ tục khắc phục thuộc về một control duy nhất. |
-
-**Ràng buộc**:
-- Trường `remediation_id` trong bảng `Control` là khóa ngoại tới bảng `RemediationProcedure`
-- Mỗi control phải có một remediation procedure xác định
-
-### 8. Quan hệ Benchmark - Profile
-
-| Từ | Đến | Loại quan hệ | Mô tả |
-|-----|-----|--------------|-------|
-| Benchmark | Profile | Một-nhiều (1:N) | Mỗi benchmark định nghĩa nhiều profile khác nhau (Level 1, Level 2, STIG...). Mỗi profile thuộc về một benchmark duy nhất. |
-
-**Ràng buộc**:
-- Trường `benchmark_id` trong bảng `Profile` là khóa ngoại tới bảng `Benchmark`
-- Mỗi profile phải thuộc về một benchmark xác định
-
-## Hướng dẫn thực hiện quan hệ
-
-### Triển khai trong SQL
-
-Dưới đây là ví dụ về cách triển khai các ràng buộc khóa ngoại trong SQL:
-
-```sql
--- Tạo bảng Platform
-CREATE TABLE Platform (
-    platform_id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    type VARCHAR(50) NOT NULL,
-    version VARCHAR(50) NOT NULL
-);
-
--- Tạo bảng Benchmark với khóa ngoại tới Platform
-CREATE TABLE Benchmark (
-    benchmark_id VARCHAR(50) PRIMARY KEY,
-    name VARCHAR(200) NOT NULL,
-    version VARCHAR(50) NOT NULL,
-    publication_date DATE NOT NULL,
-    description TEXT,
-    platform_id VARCHAR(50) NOT NULL,
-    FOREIGN KEY (platform_id) REFERENCES Platform(platform_id)
-);
-
--- Tạo bảng Profile với khóa ngoại tới Benchmark
-CREATE TABLE Profile (
-    profile_id VARCHAR(50) PRIMARY KEY,
-    benchmark_id VARCHAR(50) NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    FOREIGN KEY (benchmark_id) REFERENCES Benchmark(benchmark_id)
-);
-
--- Tạo bảng Section với khóa ngoại tới Benchmark và self-reference
-CREATE TABLE Section (
-    section_id VARCHAR(50) PRIMARY KEY,
-    benchmark_id VARCHAR(50) NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    level INT NOT NULL,
-    parent_id VARCHAR(50),
-    FOREIGN KEY (benchmark_id) REFERENCES Benchmark(benchmark_id),
-    FOREIGN KEY (parent_id) REFERENCES Section(section_id)
-);
-
--- Tạo bảng AuditProcedure
-CREATE TABLE AuditProcedure (
-    audit_id VARCHAR(50) PRIMARY KEY,
-    content TEXT NOT NULL,
-    platform_type VARCHAR(50) NOT NULL,
-    implementation_type VARCHAR(50) NOT NULL
-);
-
--- Tạo bảng RemediationProcedure
-CREATE TABLE RemediationProcedure (
-    remediation_id VARCHAR(50) PRIMARY KEY,
-    content TEXT NOT NULL,
-    platform_type VARCHAR(50) NOT NULL,
-    implementation_type VARCHAR(50) NOT NULL
-);
-
--- Tạo bảng Control với khóa ngoại tới Section, AuditProcedure và RemediationProcedure
-CREATE TABLE Control (
-    control_id VARCHAR(50) PRIMARY KEY,
-    section_id VARCHAR(50) NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    rationale TEXT,
-    impact TEXT,
-    default_value VARCHAR(200),
-    assessment_status VARCHAR(50) NOT NULL,
-    audit_id VARCHAR(50) NOT NULL,
-    remediation_id VARCHAR(50) NOT NULL,
-    FOREIGN KEY (section_id) REFERENCES Section(section_id),
-    FOREIGN KEY (audit_id) REFERENCES AuditProcedure(audit_id),
-    FOREIGN KEY (remediation_id) REFERENCES RemediationProcedure(remediation_id)
-);
-
--- Tạo bảng trung gian Control_Profile cho quan hệ nhiều-nhiều
-CREATE TABLE Control_Profile (
-    control_id VARCHAR(50) NOT NULL,
-    profile_id VARCHAR(50) NOT NULL,
-    PRIMARY KEY (control_id, profile_id),
-    FOREIGN KEY (control_id) REFERENCES Control(control_id),
-    FOREIGN KEY (profile_id) REFERENCES Profile(profile_id)
-);
-```
-
-### Triển khai trong mã nguồn
-
-Khi triển khai các quan hệ này trong mã nguồn, cần đảm bảo tính toàn vẹn dữ liệu:
-
-```python
-# Ví dụ về việc thêm một control vào section và profile
-def add_control_to_section_and_profiles(control_data, section_id, profile_ids):
-    # Kiểm tra section có tồn tại không
-    if not section_exists(section_id):
-        raise ValueError(f"Section {section_id} không tồn tại")
-    
-    # Kiểm tra các profile có tồn tại không
-    for profile_id in profile_ids:
-        if not profile_exists(profile_id):
-            raise ValueError(f"Profile {profile_id} không tồn tại")
-    
-    # Tạo thủ tục audit và remediation
-    audit_id = create_audit_procedure(control_data['audit_procedure'])
-    remediation_id = create_remediation_procedure(control_data['remediation_procedure'])
-    
-    # Tạo control
-    control_id = create_control(
-        title=control_data['title'],
-        description=control_data['description'],
-        section_id=section_id,
-        audit_id=audit_id,
-        remediation_id=remediation_id
-    )
-    
-    # Liên kết control với các profile
-    for profile_id in profile_ids:
-        link_control_to_profile(control_id, profile_id)
-    
-    return control_id
-```
-
-## Quản lý toàn vẹn tham chiếu
-
-### Xử lý khi xóa
-
-Cần xử lý cẩn thận khi xóa các bản ghi để tránh mất toàn vẹn tham chiếu:
-
-1. **Cascade Delete**: Khi xóa một benchmark, tất cả section, control, profile và các liên kết liên quan sẽ bị xóa.
-2. **Restrict Delete**: Không cho phép xóa một section nếu nó đang chứa các control.
-3. **Nullify Reference**: Khi xóa một section cha, các section con có thể được đặt lại tham chiếu cha thành NULL.
-
-Ví dụ SQL cho các ràng buộc này:
-
-```sql
--- Cascade Delete khi xóa Benchmark
-FOREIGN KEY (benchmark_id) REFERENCES Benchmark(benchmark_id) ON DELETE CASCADE
-
--- Restrict Delete khi xóa Section
-FOREIGN KEY (section_id) REFERENCES Section(section_id) ON DELETE RESTRICT
-
--- Nullify Reference khi xóa Section cha
-FOREIGN KEY (parent_id) REFERENCES Section(section_id) ON DELETE SET NULL
-```
-
-## Tạo dữ liệu mẫu
-
-Khi tạo dữ liệu mẫu, cần tuân thủ đúng thứ tự để đảm bảo toàn vẹn tham chiếu:
-
-1. Tạo Platform
-2. Tạo Benchmark
-3. Tạo Profile
-4. Tạo Section gốc
-5. Tạo Section con
-6. Tạo AuditProcedure và RemediationProcedure
-7. Tạo Control
-8. Tạo liên kết Control_Profile
+Thiết kế này phù hợp với yêu cầu của công cụ tự động hóa Security Audit theo CIS Benchmark theo kiến trúc monolithic, cho phép phát triển nhanh chóng và hiệu quả.

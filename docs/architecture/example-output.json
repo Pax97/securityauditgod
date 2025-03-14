@@ -1,0 +1,318 @@
+{
+    "system_info": {
+      "hostname": "web1.example.com",
+      "ip_address": "192.168.1.10",
+      "collector_type": "linux",
+      "os_info": {
+        "name": "Ubuntu",
+        "version": "24.04",
+        "kernel": "6.2.0-35-generic",
+        "architecture": "x86_64"
+      }
+    },
+    "collection_info": {
+      "collector_version": "1.0.0",
+      "collection_date": "2025-03-17T14:15:00Z",
+      "collector_script": "linux_collector.py",
+      "collection_parameters": {
+        "include_all_modules": true,
+        "skip_network_scan": false
+      },
+      "collection_duration": 45.8
+    },
+    "collected_data": {
+      "filesystem": {
+        "partitions": [
+          {
+            "mount_point": "/",
+            "device": "/dev/sda1",
+            "fs_type": "ext4",
+            "mount_options": "rw,relatime,errors=remount-ro",
+            "total_size_kb": 51475068,
+            "used_size_kb": 15724540,
+            "available_size_kb": 33119376
+          },
+          {
+            "mount_point": "/var",
+            "device": "/dev/sda2",
+            "fs_type": "ext4",
+            "mount_options": "rw,relatime",
+            "total_size_kb": 20594668,
+            "used_size_kb": 5245864,
+            "available_size_kb": 14348804
+          }
+        ],
+        "kernel_modules": {
+          "cramfs": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          },
+          "freevxfs": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          },
+          "jffs2": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          },
+          "hfs": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          },
+          "hfsplus": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          },
+          "udf": {
+            "loaded": false,
+            "blacklisted": true,
+            "install_command_set": true
+          }
+        },
+        "file_permissions": {
+          "/etc/passwd": {
+            "owner": "root",
+            "group": "root",
+            "mode": "0644",
+            "size": 2145
+          },
+          "/etc/shadow": {
+            "owner": "root",
+            "group": "shadow",
+            "mode": "0640",
+            "size": 1621
+          },
+          "/etc/group": {
+            "owner": "root",
+            "group": "root",
+            "mode": "0644",
+            "size": 986
+          },
+          "/etc/gshadow": {
+            "owner": "root",
+            "group": "shadow",
+            "mode": "0640",
+            "size": 820
+          }
+        }
+      },
+      "users": {
+        "accounts": [
+          {
+            "username": "root",
+            "uid": 0,
+            "gid": 0,
+            "home": "/root",
+            "shell": "/bin/bash",
+            "password_props": {
+              "last_changed": 19167,
+              "min_days": 0,
+              "max_days": 99999,
+              "warn_days": 7
+            }
+          },
+          {
+            "username": "ubuntu",
+            "uid": 1000,
+            "gid": 1000,
+            "home": "/home/ubuntu",
+            "shell": "/bin/bash",
+            "password_props": {
+              "last_changed": 19167,
+              "min_days": 0,
+              "max_days": 99999,
+              "warn_days": 7
+            }
+          },
+          {
+            "username": "mysql",
+            "uid": 111,
+            "gid": 116,
+            "home": "/var/lib/mysql",
+            "shell": "/bin/false",
+            "password_props": {
+              "last_changed": 19050,
+              "min_days": 0,
+              "max_days": 99999,
+              "warn_days": 7
+            }
+          }
+        ],
+        "login_defs": {
+          "PASS_MAX_DAYS": 99999,
+          "PASS_MIN_DAYS": 0,
+          "PASS_WARN_AGE": 7,
+          "UID_MIN": 1000,
+          "UID_MAX": 60000,
+          "GID_MIN": 1000,
+          "GID_MAX": 60000,
+          "ENCRYPT_METHOD": "SHA512"
+        }
+      },
+      "groups": {
+        "list": [
+          {
+            "name": "root",
+            "gid": 0,
+            "members": []
+          },
+          {
+            "name": "sudo",
+            "gid": 27,
+            "members": ["ubuntu"]
+          },
+          {
+            "name": "mysql",
+            "gid": 116,
+            "members": []
+          }
+        ]
+      },
+      "services": {
+        "systemd": [
+          {
+            "name": "ssh.service",
+            "load_state": "loaded",
+            "active_state": "active",
+            "sub_state": "running",
+            "unit_file_state": "enabled"
+          },
+          {
+            "name": "mysql.service",
+            "load_state": "loaded",
+            "active_state": "active",
+            "sub_state": "running",
+            "unit_file_state": "enabled"
+          },
+          {
+            "name": "apache2.service",
+            "load_state": "loaded",
+            "active_state": "active",
+            "sub_state": "running",
+            "unit_file_state": "enabled"
+          }
+        ]
+      },
+      "network": {
+        "interfaces": [
+          {
+            "name": "ens3",
+            "ip_address": "192.168.1.10",
+            "netmask": "255.255.255.0",
+            "mac_address": "00:0c:29:f5:1d:7e",
+            "state": "up"
+          },
+          {
+            "name": "lo",
+            "ip_address": "127.0.0.1",
+            "netmask": "255.0.0.0",
+            "mac_address": "",
+            "state": "up"
+          }
+        ],
+        "open_ports": [
+          {
+            "protocol": "tcp",
+            "port": 22,
+            "process": "sshd",
+            "pid": 1234
+          },
+          {
+            "protocol": "tcp",
+            "port": 80,
+            "process": "apache2",
+            "pid": 2345
+          },
+          {
+            "protocol": "tcp",
+            "port": 3306,
+            "process": "mysqld",
+            "pid": 3456
+          }
+        ],
+        "firewall": {
+          "ufw_status": "active",
+          "ufw_rules": [
+            "22/tcp ALLOW 192.168.1.0/24",
+            "80/tcp ALLOW Anywhere",
+            "443/tcp ALLOW Anywhere"
+          ],
+          "iptables_rules": [
+            "-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT",
+            "-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT",
+            "-A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT"
+          ]
+        }
+      },
+      "security": {
+        "selinux": {
+          "enabled": false,
+          "config": "disabled"
+        },
+        "apparmor": {
+          "enabled": true,
+          "profiles": [
+            {
+              "name": "/usr/sbin/mysqld",
+              "mode": "enforce"
+            },
+            {
+              "name": "/usr/sbin/apache2",
+              "mode": "enforce"
+            }
+          ]
+        },
+        "pam": {
+          "common_auth": "auth required pam_unix.so nullok_secure",
+          "common_password": "password requisite pam_pwquality.so retry=3 minlen=14",
+          "common_account": "account required pam_unix.so",
+          "common_session": "session required pam_unix.so"
+        },
+        "sshd_config": {
+          "Protocol": "2",
+          "LogLevel": "INFO",
+          "PermitRootLogin": "no",
+          "MaxAuthTries": "4",
+          "PasswordAuthentication": "no",
+          "PermitEmptyPasswords": "no",
+          "X11Forwarding": "no"
+        }
+      },
+      "kernel": {
+        "parameters": {
+          "fs.suid_dumpable": "0",
+          "kernel.randomize_va_space": "2",
+          "net.ipv4.conf.all.accept_redirects": "0",
+          "net.ipv4.conf.all.log_martians": "1",
+          "net.ipv4.conf.all.rp_filter": "1",
+          "net.ipv4.conf.all.send_redirects": "0",
+          "net.ipv4.conf.default.accept_redirects": "0"
+        }
+      },
+      "logging": {
+        "rsyslog": {
+          "installed": true,
+          "enabled": true,
+          "config_files": [
+            "/etc/rsyslog.conf",
+            "/etc/rsyslog.d/50-default.conf"
+          ]
+        },
+        "auditd": {
+          "installed": true,
+          "enabled": true,
+          "rules": [
+            "-w /etc/passwd -p wa -k identity",
+            "-w /etc/shadow -p wa -k identity",
+            "-w /etc/group -p wa -k identity",
+            "-w /etc/gshadow -p wa -k identity"
+          ]
+        }
+      }
+    }
+  }

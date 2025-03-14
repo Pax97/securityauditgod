@@ -1,0 +1,424 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 900">
+  <defs>
+    <style>
+      .table {
+        fill: #f8f9fa;
+        stroke: #343a40;
+        stroke-width: 2;
+      }
+      .table-header {
+        fill: #e9ecef;
+        stroke: #343a40;
+        stroke-width: 1;
+      }
+      .table-content {
+        fill: #ffffff;
+        stroke: #dee2e6;
+        stroke-width: 1;
+      }
+      .title {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .table-title {
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        font-weight: bold;
+        text-anchor: middle;
+      }
+      .field-name {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        text-anchor: start;
+      }
+      .field-type {
+        font-family: Arial, sans-serif;
+        font-size: 12px;
+        text-anchor: end;
+        font-style: italic;
+      }
+      .primary-key {
+        font-weight: bold;
+      }
+      .relationship {
+        stroke: #6c757d;
+        stroke-width: 1.5;
+        fill: none;
+      }
+      .arrow {
+        fill: #6c757d;
+      }
+      .group-label {
+        font-family: Arial, sans-serif;
+        font-size: 18px;
+        font-weight: bold;
+        fill: #495057;
+      }
+      .group-box {
+        fill: none;
+        stroke: #adb5bd;
+        stroke-width: 2;
+        stroke-dasharray: 5,5;
+      }
+    </style>
+  </defs>
+
+  <!-- Title -->
+  <text x="600" y="40" class="title" text-anchor="middle">CIS Benchmark Database Schema</text>
+
+  <!-- Group 1: CIS Benchmark Data -->
+  <rect x="50" y="70" width="350" height="430" class="group-box" rx="5" ry="5"/>
+  <text x="225" y="90" class="group-label" text-anchor="middle">CIS Benchmark Data</text>
+
+  <!-- Group 2: Inventory Management -->
+  <rect x="450" y="70" width="340" height="500" class="group-box" rx="5" ry="5"/>
+  <text x="620" y="90" class="group-label" text-anchor="middle">Inventory Management</text>
+
+  <!-- Group 3: Assessment Results -->
+  <rect x="840" y="70" width="310" height="430" class="group-box" rx="5" ry="5"/>
+  <text x="995" y="90" class="group-label" text-anchor="middle">Assessment Results</text>
+
+  <!-- Benchmarks Table -->
+  <rect x="70" y="110" width="160" height="130" class="table" rx="3" ry="3"/>
+  <rect x="70" y="110" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="150" y="130" class="table-title">Benchmarks</text>
+  
+  <line x1="70" y1="140" x2="230" y2="140" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="80" y="160" class="field-name primary-key">benchmark_id</text>
+  <text x="220" y="160" class="field-type">TEXT</text>
+  
+  <text x="80" y="180" class="field-name">name</text>
+  <text x="220" y="180" class="field-type">TEXT</text>
+  
+  <text x="80" y="200" class="field-name">version</text>
+  <text x="220" y="200" class="field-type">TEXT</text>
+  
+  <text x="80" y="220" class="field-name">publication_date</text>
+  <text x="220" y="220" class="field-type">TEXT</text>
+
+  <!-- Profiles Table -->
+  <rect x="70" y="260" width="160" height="110" class="table" rx="3" ry="3"/>
+  <rect x="70" y="260" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="150" y="280" class="table-title">Profiles</text>
+  
+  <line x1="70" y1="290" x2="230" y2="290" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="80" y="310" class="field-name primary-key">profile_id</text>
+  <text x="220" y="310" class="field-type">TEXT</text>
+  
+  <text x="80" y="330" class="field-name">benchmark_id</text>
+  <text x="220" y="330" class="field-type">TEXT</text>
+  
+  <text x="80" y="350" class="field-name">name</text>
+  <text x="220" y="350" class="field-type">TEXT</text>
+
+  <!-- Sections Table -->
+  <rect x="70" y="390" width="160" height="130" class="table" rx="3" ry="3"/>
+  <rect x="70" y="390" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="150" y="410" class="table-title">Sections</text>
+  
+  <line x1="70" y1="420" x2="230" y2="420" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="80" y="440" class="field-name primary-key">section_id</text>
+  <text x="220" y="440" class="field-type">TEXT</text>
+  
+  <text x="80" y="460" class="field-name">benchmark_id</text>
+  <text x="220" y="460" class="field-type">TEXT</text>
+  
+  <text x="80" y="480" class="field-name">title</text>
+  <text x="220" y="480" class="field-type">TEXT</text>
+  
+  <text x="80" y="500" class="field-name">parent_id</text>
+  <text x="220" y="500" class="field-type">TEXT</text>
+
+  <!-- Controls Table -->
+  <rect x="250" y="110" width="160" height="150" class="table" rx="3" ry="3"/>
+  <rect x="250" y="110" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="330" y="130" class="table-title">Controls</text>
+  
+  <line x1="250" y1="140" x2="410" y2="140" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="260" y="160" class="field-name primary-key">control_id</text>
+  <text x="400" y="160" class="field-type">TEXT</text>
+  
+  <text x="260" y="180" class="field-name">section_id</text>
+  <text x="400" y="180" class="field-type">TEXT</text>
+  
+  <text x="260" y="200" class="field-name">title</text>
+  <text x="400" y="200" class="field-type">TEXT</text>
+  
+  <text x="260" y="220" class="field-name">audit_procedure</text>
+  <text x="400" y="220" class="field-type">TEXT</text>
+  
+  <text x="260" y="240" class="field-name">remediation</text>
+  <text x="400" y="240" class="field-type">TEXT</text>
+
+  <!-- Control_Profile Table -->
+  <rect x="250" y="280" width="160" height="90" class="table" rx="3" ry="3"/>
+  <rect x="250" y="280" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="330" y="300" class="table-title">Control_Profile</text>
+  
+  <line x1="250" y1="310" x2="410" y2="310" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="260" y="330" class="field-name primary-key">control_id</text>
+  <text x="400" y="330" class="field-type">TEXT</text>
+  
+  <text x="260" y="350" class="field-name primary-key">profile_id</text>
+  <text x="400" y="350" class="field-type">TEXT</text>
+
+  <!-- Projects Table -->
+  <rect x="470" y="110" width="160" height="110" class="table" rx="3" ry="3"/>
+  <rect x="470" y="110" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="550" y="130" class="table-title">Projects</text>
+  
+  <line x1="470" y1="140" x2="630" y2="140" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="480" y="160" class="field-name primary-key">project_id</text>
+  <text x="620" y="160" class="field-type">TEXT</text>
+  
+  <text x="480" y="180" class="field-name">name</text>
+  <text x="620" y="180" class="field-type">TEXT</text>
+  
+  <text x="480" y="200" class="field-name">created_date</text>
+  <text x="620" y="200" class="field-type">TEXT</text>
+
+  <!-- Assets Table -->
+  <rect x="470" y="240" width="160" height="150" class="table" rx="3" ry="3"/>
+  <rect x="470" y="240" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="550" y="260" class="table-title">Assets</text>
+  
+  <line x1="470" y1="270" x2="630" y2="270" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="480" y="290" class="field-name primary-key">asset_id</text>
+  <text x="620" y="290" class="field-type">TEXT</text>
+  
+  <text x="480" y="310" class="field-name">project_id</text>
+  <text x="620" y="310" class="field-type">TEXT</text>
+  
+  <text x="480" y="330" class="field-name">name</text>
+  <text x="620" y="330" class="field-type">TEXT</text>
+  
+  <text x="480" y="350" class="field-name">type</text>
+  <text x="620" y="350" class="field-type">TEXT</text>
+  
+  <text x="480" y="370" class="field-name">hostname</text>
+  <text x="620" y="370" class="field-type">TEXT</text>
+
+  <!-- AssetGroups Table -->
+  <rect x="470" y="410" width="160" height="110" class="table" rx="3" ry="3"/>
+  <rect x="470" y="410" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="550" y="430" class="table-title">AssetGroups</text>
+  
+  <line x1="470" y1="440" x2="630" y2="440" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="480" y="460" class="field-name primary-key">group_id</text>
+  <text x="620" y="460" class="field-type">TEXT</text>
+  
+  <text x="480" y="480" class="field-name">project_id</text>
+  <text x="620" y="480" class="field-type">TEXT</text>
+  
+  <text x="480" y="500" class="field-name">name</text>
+  <text x="620" y="500" class="field-type">TEXT</text>
+
+  <!-- Asset_Group Table -->
+  <rect x="650" y="240" width="120" height="90" class="table" rx="3" ry="3"/>
+  <rect x="650" y="240" width="120" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="710" y="260" class="table-title">Asset_Group</text>
+  
+  <line x1="650" y1="270" x2="770" y2="270" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="660" y="290" class="field-name primary-key">asset_id</text>
+  <text x="760" y="290" class="field-type">TEXT</text>
+  
+  <text x="660" y="310" class="field-name primary-key">group_id</text>
+  <text x="760" y="310" class="field-type">TEXT</text>
+
+  <!-- AssetTags Table -->
+  <rect x="650" y="110" width="120" height="90" class="table" rx="3" ry="3"/>
+  <rect x="650" y="110" width="120" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="710" y="130" class="table-title">AssetTags</text>
+  
+  <line x1="650" y1="140" x2="770" y2="140" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="660" y="160" class="field-name primary-key">tag_id</text>
+  <text x="760" y="160" class="field-type">TEXT</text>
+  
+  <text x="660" y="180" class="field-name">project_id</text>
+  <text x="760" y="180" class="field-type">TEXT</text>
+
+  <!-- Asset_Tag Table -->
+  <rect x="650" y="350" width="120" height="90" class="table" rx="3" ry="3"/>
+  <rect x="650" y="350" width="120" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="710" y="370" class="table-title">Asset_Tag</text>
+  
+  <line x1="650" y1="380" x2="770" y2="380" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="660" y="400" class="field-name primary-key">asset_id</text>
+  <text x="760" y="400" class="field-type">TEXT</text>
+  
+  <text x="660" y="420" class="field-name primary-key">tag_id</text>
+  <text x="760" y="420" class="field-type">TEXT</text>
+
+  <!-- Assessments Table -->
+  <rect x="860" y="110" width="160" height="150" class="table" rx="3" ry="3"/>
+  <rect x="860" y="110" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="940" y="130" class="table-title">Assessments</text>
+  
+  <line x1="860" y1="140" x2="1020" y2="140" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="870" y="160" class="field-name primary-key">assessment_id</text>
+  <text x="1010" y="160" class="field-type">TEXT</text>
+  
+  <text x="870" y="180" class="field-name">project_id</text>
+  <text x="1010" y="180" class="field-type">TEXT</text>
+  
+  <text x="870" y="200" class="field-name">asset_id</text>
+  <text x="1010" y="200" class="field-type">TEXT</text>
+  
+  <text x="870" y="220" class="field-name">benchmark_id</text>
+  <text x="1010" y="220" class="field-type">TEXT</text>
+  
+  <text x="870" y="240" class="field-name">timestamp</text>
+  <text x="1010" y="240" class="field-type">TEXT</text>
+
+  <!-- Results Table -->
+  <rect x="860" y="280" width="160" height="170" class="table" rx="3" ry="3"/>
+  <rect x="860" y="280" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="940" y="300" class="table-title">Results</text>
+  
+  <line x1="860" y1="310" x2="1020" y2="310" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="870" y="330" class="field-name primary-key">result_id</text>
+  <text x="1010" y="330" class="field-type">TEXT</text>
+  
+  <text x="870" y="350" class="field-name">assessment_id</text>
+  <text x="1010" y="350" class="field-type">TEXT</text>
+  
+  <text x="870" y="370" class="field-name">control_id</text>
+  <text x="1010" y="370" class="field-type">TEXT</text>
+  
+  <text x="870" y="390" class="field-name">status</text>
+  <text x="1010" y="390" class="field-type">TEXT</text>
+  
+  <text x="870" y="410" class="field-name">actual_value</text>
+  <text x="1010" y="410" class="field-type">TEXT</text>
+  
+  <text x="870" y="430" class="field-name">evidence</text>
+  <text x="1010" y="430" class="field-type">TEXT</text>
+
+  <!-- CollectedData Table -->
+  <rect x="980" y="160" width="160" height="130" class="table" rx="3" ry="3"/>
+  <rect x="980" y="160" width="160" height="30" class="table-header" rx="3" ry="3"/>
+  <text x="1060" y="180" class="table-title">CollectedData</text>
+  
+  <line x1="980" y1="190" x2="1140" y2="190" stroke="#343a40" stroke-width="1"/>
+  
+  <text x="990" y="210" class="field-name primary-key">collection_id</text>
+  <text x="1130" y="210" class="field-type">TEXT</text>
+  
+  <text x="990" y="230" class="field-name">asset_id</text>
+  <text x="1130" y="230" class="field-type">TEXT</text>
+  
+  <text x="990" y="250" class="field-name">collector_type</text>
+  <text x="1130" y="250" class="field-type">TEXT</text>
+  
+  <text x="990" y="270" class="field-name">raw_data</text>
+  <text x="1130" y="270" class="field-type">TEXT</text>
+
+  <!-- Relationships -->
+  <!-- Benchmarks -> Profiles -->
+  <path d="M150,240 L150,260" class="relationship"/>
+  <polygon points="150,260 146,252 154,252" class="arrow"/>
+
+  <!-- Benchmarks -> Sections -->
+  <path d="M110,240 L110,390" class="relationship"/>
+  <polygon points="110,390 106,382 114,382" class="arrow"/>
+
+  <!-- Sections -> Controls -->
+  <path d="M230,450 C240,450 240,185 250,185" class="relationship"/>
+  <polygon points="250,185 242,181 242,189" class="arrow"/>
+
+  <!-- Sections -> Sections (parent-child) -->
+  <path d="M70,480 C50,480 50,450 70,450" class="relationship"/>
+  <polygon points="70,450 62,446 62,454" class="arrow"/>
+
+  <!-- Controls -> Control_Profile -->
+  <path d="M330,260 L330,280" class="relationship"/>
+  <polygon points="330,280 326,272 334,272" class="arrow"/>
+
+  <!-- Profiles -> Control_Profile -->
+  <path d="M230,330 L250,330" class="relationship"/>
+  <polygon points="250,330 242,326 242,334" class="arrow"/>
+
+  <!-- Projects -> Assets -->
+  <path d="M550,220 L550,240" class="relationship"/>
+  <polygon points="550,240 546,232 554,232" class="arrow"/>
+
+  <!-- Projects -> AssetGroups -->
+  <path d="M500,220 C500,400 470,400 470,450" class="relationship"/>
+  <polygon points="470,450 474,442 466,442" class="arrow"/>
+
+  <!-- Projects -> AssetTags -->
+  <path d="M630,150 L650,150" class="relationship"/>
+  <polygon points="650,150 642,146 642,154" class="arrow"/>
+
+  <!-- Assets -> Asset_Group -->
+  <path d="M630,290 L650,290" class="relationship"/>
+  <polygon points="650,290 642,286 642,294" class="arrow"/>
+
+  <!-- Assets -> Asset_Tag -->
+  <path d="M630,360 L650,400" class="relationship"/>
+  <polygon points="650,400 644,393 652,397" class="arrow"/>
+
+  <!-- AssetGroups -> Asset_Group -->
+  <path d="M630,460 C650,460 670,320 670,310" class="relationship"/>
+  <polygon points="670,310 666,318 674,318" class="arrow"/>
+
+  <!-- AssetTags -> Asset_Tag -->
+  <path d="M710,200 L710,350" class="relationship"/>
+  <polygon points="710,350 706,342 714,342" class="arrow"/>
+
+  <!-- Projects -> Assessments -->
+  <path d="M600,110 C600,90 940,90 940,110" class="relationship"/>
+  <polygon points="940,110 936,102 944,102" class="arrow"/>
+
+  <!-- Assets -> Assessments -->
+  <path d="M630,320 C640,320 640,200 860,200" class="relationship"/>
+  <polygon points="860,200 852,196 852,204" class="arrow"/>
+
+  <!-- Benchmarks -> Assessments -->
+  <path d="M230,170 C240,170 240,110 840,110 C850,110 850,220 860,220" class="relationship"/>
+  <polygon points="860,220 852,216 852,224" class="arrow"/>
+
+  <!-- Profiles -> Assessments -->
+  <path d="M230,300 C240,300 240,230 840,230 C850,230 850,230 860,230" class="relationship"/>
+  <polygon points="860,230 852,226 852,234" class="arrow"/>
+
+  <!-- Assessments -> Results -->
+  <path d="M940,260 L940,280" class="relationship"/>
+  <polygon points="940,280 936,272 944,272" class="arrow"/>
+
+  <!-- Controls -> Results -->
+  <path d="M330,260 C330,270 770,270 770,370 C770,370 860,370 860,370" class="relationship"/>
+  <polygon points="860,370 852,366 852,374" class="arrow"/>
+
+  <!-- Assets -> CollectedData -->
+  <path d="M630,270 C750,270 750,230 980,230" class="relationship"/>
+  <polygon points="980,230 972,226 972,234" class="arrow"/>
+
+  <!-- Legend -->
+  <rect x="900" y="520" width="250" height="110" fill="#f8f9fa" stroke="#343a40" stroke-width="1" rx="3" ry="3"/>
+  <text x="1025" y="540" class="table-title" text-anchor="middle">Legend</text>
+  
+  <line x1="920" y1="550" x2="950" y2="550" class="relationship"/>
+  <polygon points="950,550 942,546 942,554" class="arrow"/>
+  <text x="960" y="555" class="field-name">Relationship (1-to-many)</text>
+  
+  <rect x="920" y="570" width="15" height="15" class="table-header" rx="2" ry="2"/>
+  <text x="960" y="582" class="field-name">Primary Key Field</text>
+  
+  <rect x="920" y="595" width="15" height="15" class="table" rx="2" ry="2"/>
+  <text x="960" y="607" class="field-name">Table</text>
+</svg>
