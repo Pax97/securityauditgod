@@ -39,3 +39,32 @@ python manage.py migrate
 
 # Chạy server
 python manage.py runserver
+
+```
+
+## Git Workflow
+
+Dự án này sử dụng mô hình Gitflow được điều chỉnh:
+
+- `main`: Branch production, code đã sẵn sàng phát hành
+- `develop`: Branch phát triển, tích hợp tính năng mới
+- `feature/*`: Branch cho tính năng mới
+- `bugfix/*`: Branch sửa lỗi
+- `hotfix/*`: Branch sửa lỗi khẩn cấp
+- `release/*`: Branch chuẩn bị phát hành
+
+### Quy tắc Commit
+
+Dự án sử dụng Conventional Commits:
+
+```
+<type>[optional scope]: <description>
+```
+
+Ví dụ:
+- `feat: add user authentication`
+- `fix(api): handle null response`
+
+### Pull Requests
+
+Tất cả thay đổi cần được tạo Pull Request vào `develop` và nhận approval trước khi merge.
